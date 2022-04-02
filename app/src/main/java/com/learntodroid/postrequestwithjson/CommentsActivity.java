@@ -11,6 +11,9 @@
 
     import androidx.appcompat.app.AppCompatActivity;
 
+    import java.util.Timer;
+    import java.util.TimerTask;
+
     import retrofit2.Call;
     import retrofit2.Callback;
     import retrofit2.Response;
@@ -20,8 +23,34 @@
         private Button send;
         Switch switchPower;
         TextView textResponse;
-
         private CommentsRepository commentsRepository;
+
+        private Timer switchOffTimer;
+        private SwitchOffTimerTask switchOffTimerTask;
+
+        public void switchSonoffPower(boolean on) {
+                Data d = new Data("on");
+                if(on)  {
+                    d.switc = "on";
+                } else {
+                    d.switc = "off";
+                }
+
+                commentsRepository.url = urlText.getText().toString();
+                commentsRepository = commentsRepository.getInstance();
+                Comment c = new Comment("100000140e",d);
+                commentsRepository.getCommentsService().createComment(c).enqueue(new Callback<Comment>() {
+                    @Override
+                    public void onResponse(Call<Comment> call, Response<Comment> r) {
+                        textResponse.setText("Sucsess" + r.toString());
+
+                    }
+                    @Override
+                    public void onFailure(Call<Comment> call, Throwable t) {
+                        textResponse.setText("onFailure" + t.getMessage());
+                    }
+                });
+        }
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -33,31 +62,20 @@
             switchPower = findViewById(R.id.switchPower);
             textResponse = findViewById(R.id.textResponse);
 
+
+
             switchPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    textResponse.setText("");
-
-                    Data d = new Data("on");
-                    if(isChecked)  {
-                        d.switc = "on";
-                    } else {
-                        d.switc = "off";
+                    //запускаем таймер выключения если включили устройство
+                    if (isChecked) {
+                        switchOffTimerTask = new SwitchOffTimerTask();
+                        switchOffTimer.schedule(switchOffTimerTask, 60000);
                     }
+                    textResponse.setText("");
+                    switchSonoffPower(isChecked);
 
-                    commentsRepository.url = urlText.getText().toString();
-                    commentsRepository = commentsRepository.getInstance();
-                    Comment c = new Comment("100000140e",d);
-                    commentsRepository.getCommentsService().createComment(c).enqueue(new Callback<Comment>() {
-                        @Override
-                        public void onResponse(Call<Comment> call, Response<Comment> r) {
-                            textResponse.setText("Sucsess" + r.toString());
-                        }
-                        @Override
-                        public void onFailure(Call<Comment> call, Throwable t) {
-                            textResponse.setText("onFailure" + t.getMessage());
-                        }
-                    });
+
                 }
             });
 
@@ -71,7 +89,25 @@
 
                 }
             });
+
+            switchOffTimer = new Timer();
+        }
+
+        class SwitchOffTimerTask extends TimerTask {
+
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        switchPower.setChecked(false);
+                    }
+                });
+            }
         }
     }
+
+
 //88fi6897
 //sonoff ESP_1A337B
