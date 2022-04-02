@@ -15,11 +15,28 @@
         android:text="192.168.0.17"
         android:id="@+id/activity_comments_url"/>
 
-    
-    <Button
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="150px" />
+
+    <Switch
+        android:id="@+id/switchPower"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send Request"
-        android:id="@+id/activity_comments_send"/>
+        android:scaleX="4"
+        android:scaleY="4"
+        android:text="Switch"
+        android:translationX="250px" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="250px" />
+
+    <Button
+        android:id="@+id/activity_comments_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send Request" />
 
 </LinearLayout>

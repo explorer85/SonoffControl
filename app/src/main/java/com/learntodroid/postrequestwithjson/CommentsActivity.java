@@ -3,8 +3,10 @@
     import android.os.Bundle;
     import android.view.View;
     import android.widget.Button;
+    import android.widget.Switch;
+    import android.widget.CompoundButton;
     import android.widget.EditText;
-    import android.widget.RadioGroup;
+
 
     import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +17,7 @@
     public class CommentsActivity extends AppCompatActivity {
         private EditText urlText;
         private Button send;
+        Switch switchPower;
         private String switchState = "on";
 
         private CommentsRepository commentsRepository;
@@ -26,34 +29,42 @@
 
             urlText = findViewById(R.id.activity_comments_url);
             send = findViewById(R.id.activity_comments_send);
+            switchPower = findViewById(R.id.switchPower);
+           // switchPower.setOnCheckedChangeListener(this);
+
+            switchPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    Data d = new Data("on");
+                    if(isChecked)  {
+                        d.switc = "on";
+                    } else {
+                        d.switc = "off";
+                    }
+
+                    commentsRepository.url = urlText.getText().toString();
+                    commentsRepository = commentsRepository.getInstance();
+                    Comment c = new Comment("100000140e",d);
+                    commentsRepository.getCommentsService().createComment(c).enqueue(new Callback<Comment>() {
+                        @Override
+                        public void onResponse(Call<Comment> call, Response<Comment> r) {
+                            // Toast.makeText(getApplicationContext(), "Comment " + r.body().getComment() + " created", Toast.LENGTH_SHORT).show();
+                        }
+                        @Override
+                        public void onFailure(Call<Comment> call, Throwable t) {
+                            // Toast.makeText(getApplicationContext(), "Error Creating Comment: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+
 
 
 
             send.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    commentsRepository.url = urlText.getText().toString();
-                    commentsRepository = commentsRepository.getInstance();
-
-                    Data d = new Data("on");
-                    if (switchState == "on")
-                        switchState = "off";
-                    else
-                        switchState = "on";
-                    d.switc = switchState;
-                            Comment c = new Comment("100000140e",d);
-                            commentsRepository.getCommentsService().createComment(c).enqueue(new Callback<Comment>() {
-                                @Override
-                                public void onResponse(Call<Comment> call, Response<Comment> r) {
-                                   // Toast.makeText(getApplicationContext(), "Comment " + r.body().getComment() + " created", Toast.LENGTH_SHORT).show();
-                                }
-                                @Override
-                                public void onFailure(Call<Comment> call, Throwable t) {
-                                   // Toast.makeText(getApplicationContext(), "Error Creating Comment: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
 
 
                 }
