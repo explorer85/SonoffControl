@@ -31,6 +31,16 @@
 
     <Space
         android:layout_width="match_parent"
+        android:layout_height="150px" />
+
+    <TextView
+        android:id="@+id/textResponse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+    <Space
+        android:layout_width="match_parent"
         android:layout_height="250px" />
 
     <Button

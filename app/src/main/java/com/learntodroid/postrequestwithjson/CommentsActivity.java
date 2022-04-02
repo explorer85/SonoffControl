@@ -6,6 +6,7 @@
     import android.widget.Switch;
     import android.widget.CompoundButton;
     import android.widget.EditText;
+    import android.widget.TextView;
 
 
     import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +19,7 @@
         private EditText urlText;
         private Button send;
         Switch switchPower;
-        private String switchState = "on";
+        TextView textResponse;
 
         private CommentsRepository commentsRepository;
 
@@ -30,11 +31,12 @@
             urlText = findViewById(R.id.activity_comments_url);
             send = findViewById(R.id.activity_comments_send);
             switchPower = findViewById(R.id.switchPower);
-           // switchPower.setOnCheckedChangeListener(this);
+            textResponse = findViewById(R.id.textResponse);
 
             switchPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    textResponse.setText("");
 
                     Data d = new Data("on");
                     if(isChecked)  {
@@ -49,11 +51,11 @@
                     commentsRepository.getCommentsService().createComment(c).enqueue(new Callback<Comment>() {
                         @Override
                         public void onResponse(Call<Comment> call, Response<Comment> r) {
-                            // Toast.makeText(getApplicationContext(), "Comment " + r.body().getComment() + " created", Toast.LENGTH_SHORT).show();
+                            textResponse.setText("Sucsess" + r.toString());
                         }
                         @Override
                         public void onFailure(Call<Comment> call, Throwable t) {
-                            // Toast.makeText(getApplicationContext(), "Error Creating Comment: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            textResponse.setText("onFailure" + t.getMessage());
                         }
                     });
                 }
