@@ -69,8 +69,8 @@
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     //запускаем таймер выключения если включили устройство
                     if (isChecked) {
-                        switchOffTimerTask = new SwitchOffTimerTask();
-                        switchOffTimer.schedule(switchOffTimerTask, 60000);
+                        //switchOffTimerTask = new SwitchOffTimerTask();
+                        //switchOffTimer.schedule(switchOffTimerTask, 60000);
                     }
                     textResponse.setText("");
                     switchSonoffPower(isChecked);
