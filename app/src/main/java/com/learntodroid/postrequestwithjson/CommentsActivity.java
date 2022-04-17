@@ -1,6 +1,7 @@
     package com.learntodroid.postrequestwithjson;
 
     import android.os.Bundle;
+    import android.util.Log;
     import android.view.View;
     import android.widget.Button;
     import android.widget.Switch;
@@ -13,6 +14,7 @@
 
     import java.util.Timer;
     import java.util.TimerTask;
+    import java.util.logging.Logger;
 
     import retrofit2.Call;
     import retrofit2.Callback;
@@ -20,9 +22,10 @@
 
     public class CommentsActivity extends AppCompatActivity {
         private EditText urlText;
-        private Button send;
         Switch switchPower;
         TextView textResponse;
+        Switch switchPeriodic;
+        private EditText textPeriod;
         private CommentsRepository commentsRepository;
 
         private Timer switchOffTimer;
@@ -58,20 +61,16 @@
             setContentView(R.layout.activity_comments);
 
             urlText = findViewById(R.id.activity_comments_url);
-            send = findViewById(R.id.activity_comments_send);
             switchPower = findViewById(R.id.switchPower);
             textResponse = findViewById(R.id.textResponse);
+            switchPeriodic = findViewById(R.id.switchPeriodic);
+            textPeriod = findViewById(R.id.textPerid);
 
 
 
             switchPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //запускаем таймер выключения если включили устройство
-                    if (isChecked) {
-                        //switchOffTimerTask = new SwitchOffTimerTask();
-                        //switchOffTimer.schedule(switchOffTimerTask, 60000);
-                    }
                     textResponse.setText("");
                     switchSonoffPower(isChecked);
 
@@ -79,20 +78,30 @@
                 }
             });
 
-
-
-
-            send.setOnClickListener(new View.OnClickListener() {
+            switchPeriodic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    //запускаем таймер выключения если включили устройство
+                    if (isChecked) {
+                        switchSonoffPower(true);
+                        switchOffTimer = new Timer();
+                        switchOffTimerTask = new SwitchOffTimerTask();
+                        switchOffTimer.schedule(switchOffTimerTask, 0, Long.parseLong(textPeriod.getText().toString()) * 1000);
+                    } else {
+                        switchOffTimer.cancel();
 
-
+                        switchSonoffPower(false);
+                    }
                 }
             });
 
-            switchOffTimer = new Timer();
+
+
+
+
         }
 
+        private boolean isOn = false;
         class SwitchOffTimerTask extends TimerTask {
 
             @Override
@@ -101,7 +110,10 @@
 
                     @Override
                     public void run() {
-                        switchPower.setChecked(false);
+                        Log.i("","timer runnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+                        textResponse.setText("");
+                        isOn = !isOn;
+                        switchSonoffPower(isOn);
                     }
                 });
             }

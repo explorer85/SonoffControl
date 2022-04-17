@@ -49,10 +49,18 @@
         android:layout_width="match_parent"
         android:layout_height="250px" />
 
-    <Button
-        android:id="@+id/activity_comments_send"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/textPerid"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Request" />
+        android:ems="10"
+        android:inputType="number"
+        android:text="60" />
+
+    <Switch
+        android:id="@+id/switchPeriodic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Periodic zaeb" />
 
 </LinearLayout>
