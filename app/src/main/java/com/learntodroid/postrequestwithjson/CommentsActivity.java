@@ -1,5 +1,6 @@
     package com.learntodroid.postrequestwithjson;
 
+    import android.content.Intent;
     import android.os.Bundle;
     import android.util.Log;
     import android.view.View;
@@ -28,10 +29,11 @@
         private EditText textPeriod;
         private CommentsRepository commentsRepository;
 
-        private Timer switchOffTimer;
-        private SwitchOffTimerTask switchOffTimerTask;
 
-        public void switchSonoffPower(boolean on) {
+
+        SonoffSwitcher ss;
+
+       /* public void switchSonoffPower(boolean on) {
                 Data d = new Data("on");
                 if(on)  {
                     d.switc = "on";
@@ -53,7 +55,7 @@
                         textResponse.setText("onFailure" + t.getMessage());
                     }
                 });
-        }
+        }*/
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +69,14 @@
             textPeriod = findViewById(R.id.textPerid);
 
 
-
             switchPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     textResponse.setText("");
-                    switchSonoffPower(isChecked);
+                    ss = new SonoffSwitcher();
+                    ss.url = urlText.getText().toString();
+                    ss.switchSonoffPower(isChecked);
+                    textResponse.setText(ss.response);
 
 
                 }
@@ -81,16 +85,16 @@
             switchPeriodic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //запускаем таймер выключения если включили устройство
                     if (isChecked) {
-                        switchSonoffPower(true);
-                        switchOffTimer = new Timer();
-                        switchOffTimerTask = new SwitchOffTimerTask();
-                        switchOffTimer.schedule(switchOffTimerTask, 0, Long.parseLong(textPeriod.getText().toString()) * 1000);
-                    } else {
-                        switchOffTimer.cancel();
+                        startService(
+                                new Intent(CommentsActivity.this,
+                                        PeriodicTimerService.class).putExtra("url", urlText.getText().toString()).
+                                        putExtra("period", textPeriod.getText().toString()));
 
-                        switchSonoffPower(false);
+                    } else {
+                        stopService(
+                                new Intent(CommentsActivity.this, PeriodicTimerService.class));
+
                     }
                 }
             });
@@ -101,23 +105,7 @@
 
         }
 
-        private boolean isOn = false;
-        class SwitchOffTimerTask extends TimerTask {
 
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        Log.i("","timer runnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
-                        textResponse.setText("");
-                        isOn = !isOn;
-                        switchSonoffPower(isOn);
-                    }
-                });
-            }
-        }
     }
 
 
