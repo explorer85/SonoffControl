@@ -13,6 +13,8 @@
 
     import androidx.appcompat.app.AppCompatActivity;
 
+    import java.util.Observable;
+    import java.util.Observer;
     import java.util.Timer;
     import java.util.TimerTask;
     import java.util.logging.Logger;
@@ -21,7 +23,7 @@
     import retrofit2.Callback;
     import retrofit2.Response;
 
-    public class CommentsActivity extends AppCompatActivity {
+    public class CommentsActivity extends AppCompatActivity implements Observer {
         private EditText urlText;
         Switch switchPower;
         TextView textResponse;
@@ -74,6 +76,7 @@
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     textResponse.setText("");
                     ss = new SonoffSwitcher();
+                    ss.addObserver(CommentsActivity.this);
                     ss.url = urlText.getText().toString();
                     ss.switchSonoffPower(isChecked);
                     textResponse.setText(ss.response);
@@ -106,6 +109,12 @@
         }
 
 
+        private SonoffSwitcher sonoffUpdate ;
+        @Override
+        public void update(Observable observable, Object o) {
+            sonoffUpdate = (SonoffSwitcher) observable;
+            textResponse.setText(sonoffUpdate.getResponseText());
+        }
     }
 
 

@@ -2,14 +2,28 @@ package com.learntodroid.postrequestwithjson;
 
 import android.util.Log;
 
+import java.util.Observable;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SonoffSwitcher {
+public class SonoffSwitcher extends Observable {
     private CommentsRepository commentsRepository;
     public String url;
     public String response;
+
+    public String getResponseText()
+    {
+        return response;
+    }
+
+    public void setResponseText(String response)
+    {
+        this.response = response;
+        setChanged();
+        notifyObservers();
+    }
 
     public void switchSonoffPower(boolean on) {
         Data d = new Data("on");
@@ -27,13 +41,12 @@ public class SonoffSwitcher {
             public void onResponse(Call<Comment> call, Response<Comment> r) {
                 Log.i("","Sucsesssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
                 response = "Sucsess" + r.toString();
-               // textResponse.setText("Sucsess" + r.toString());
-
+                setResponseText(response);
             }
             @Override
             public void onFailure(Call<Comment> call, Throwable t) {
                 response = "onFailure" + t.getMessage();
-              //  textResponse.setText("onFailure" + t.getMessage());
+                setResponseText(response);
             }
         });
     }
