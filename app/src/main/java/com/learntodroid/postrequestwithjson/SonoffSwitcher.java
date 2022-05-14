@@ -33,8 +33,8 @@ public class SonoffSwitcher extends Observable {
             d.switc = "off";
         }
 
+        commentsRepository = new CommentsRepository();
         commentsRepository.url = url;
-        commentsRepository = commentsRepository.getInstance();
         Comment c = new Comment("100000140e",d);
         commentsRepository.getCommentsService().createComment(c).enqueue(new Callback<Comment>() {
             @Override

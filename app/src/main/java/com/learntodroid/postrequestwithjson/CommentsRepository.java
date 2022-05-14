@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public final class CommentsRepository {
-    public static String url = "192.168.0.17";
+    public static String url = "62.148.139.147";
     private static CommentsRepository instance;
 
     private CommentsService commentsService;
